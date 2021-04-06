@@ -1,5 +1,4 @@
-using DataFrames, Dash, DashHtmlComponents, DashCoreComponents, PlotlyJS
-using Tables
+using DataFrames, Dash, DashHtmlComponents, DashCoreComponents, PlotlyJS, Statistics
 #using EconoSim
 
 include("loreco_sim.jl")
@@ -51,8 +50,8 @@ callback!(
     n_consumers, n_bakers, n_tv_merchants)
     data, _ = run!(model, actor_step!, econo_model_step!, n_periods; adata)
     print(data[1:5,:])
-    datatable = Tables.namedtupleiterator(data)
-    pSum = Plot(data, x = :step, y = :sum_balance, name="total") 
+
+    pSum = Plot(data, x = :step, y = :sum_balance, name="total")
     pMin = Plot(data, x = :step, y = :minimum_balance, name="minimum")
     pMax = Plot(data, x = :step, y = :maximum_balance, name="maximum")
     pMedian = Plot(data, x = :step, y = :median_balance, name="median")
