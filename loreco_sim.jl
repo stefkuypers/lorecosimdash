@@ -1,5 +1,4 @@
 using Agents
-using Statistics
 using EconoSim
 # Default properties
 SUMSY = :sumsy
@@ -180,6 +179,3 @@ function make_loreco(model, actor, needs = nothing)
 end
 
 balance(a::Actor) = sumsy_balance(a.balance)
-round_mean(values) = round(mean(values), digits = 2)
-round_median(values) = round(median(values), digits = 2)
-round_std(values) = round(std(values), digits = 2)
