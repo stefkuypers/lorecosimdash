@@ -30,5 +30,6 @@ callback!(app, Output("page-content", "children"), Input("url", "pathname")) do 
 end
 
 
-run_server(app, "0.0.0.0", parse(Int,ARGS[1]); debug = true)
+
+run_server(app, "0.0.0.0", parse(Int64,ARGS[1]))
 #run_server(app, "0.0.0.0", debug=true)
