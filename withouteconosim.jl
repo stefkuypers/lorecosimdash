@@ -1,12 +1,11 @@
-using DataFrames, Dash, DashHtmlComponents, DashCoreComponents, PlotlyJS, UrlDownload, Statistics
+using DataFrames, Dash, DashHtmlComponents, DashCoreComponents, PlotlyJS, UrlDownload
 
 
 
 df1 = DataFrame(urldownload("https://raw.githubusercontent.com/plotly/datasets/master/gapminderDataFiveYear.csv"))
 
 years = unique(df1[!, :year])
-print(years)
-print(mean(years))
+
 app = dash()
 
 app.layout = html_div() do
