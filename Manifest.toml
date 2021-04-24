@@ -173,12 +173,6 @@ git-tree-sha1 = "9d4f64f79012636741cf01133158a54b24924c32"
 uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 version = "0.8.4"
 
-[[EconoSim]]
-deps = ["Agents", "DataStructures"]
-git-tree-sha1 = "61e4b1d99e4834a9e066fd03e1f238309477f1be"
-uuid = "cc8cb6e0-4c11-4d04-b964-59e7aacda730"
-version = "0.1.1"
-
 [[Expat_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "1402e52fcda25064f51c77a9655ce8680b76acf0"
