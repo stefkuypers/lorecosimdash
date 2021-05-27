@@ -27,6 +27,8 @@ app.layout = html_div() do
     dcc_input(id="n_tv_merchants", type="number",  min=1, value=5),
     html_label(children="Aantal periodes"),
     dcc_input(id="n_periods", type="number",  min=10, step=10, value=10),
+    html_label(children="Aantal runs"),
+    dcc_input(id="n_runs", type="number",  min=10, step=10, value=10),
     html_button(id = "submit-button-state", children = "Run", n_clicks = 0)
 end
 
@@ -44,20 +46,18 @@ callback!(
     State("n_consumers", "value"),
     State("n_bakers", "value"),
     State("n_tv_merchants", "value"),
-) do n_clicks, n_periods, sumsy_gincome, sumsy_demfree, sumsy_dem, sumsy_interval, sumsy_seed, n_consumers, n_bakers, n_tv_merchants
-    adata = [(balance,minimum),(balance,sum),(balance,maximum), (balance, mean),(balance, median), (balance, std)]
-    model = init_loreco_model(SuMSy(sumsy_gincome, sumsy_demfree, sumsy_dem, sumsy_interval, seed = sumsy_seed),
-    n_consumers, n_bakers, n_tv_merchants)
-    data, _ = run!(model, actor_step!, econo_model_step!, n_periods; adata)
-    print(data[1:5,:])
+    State("n_runs", "value"),
+) do n_clicks, n_periods, sumsy_gincome, sumsy_demfree, sumsy_dem, sumsy_interval, sumsy_seed, n_consumers, n_bakers, n_tv_merchants, n_runs
+    adata = [(balance,sum)]
+    models = [init_loreco_model(SuMSy(sumsy_gincome, sumsy_demfree, sumsy_dem, sumsy_interval, seed = sumsy_seed),
+    n_consumers, n_bakers, n_tv_merchants) for i = 1:n_runs]
+    data, _ = ensemblerun!(models, actor_step!, econo_model_step!, n_periods; adata)
 
-    data1 = stack(data, [:minimum_balance, :maximum_balance, :median_balance, :mean_balance], :step)
-
-    print(data1[:,:])
-    pMin = Plot(data1, x = :step, y = :value, group = :variable ,mode="markers")
-
-    return pMin
-
+    print(data[data[!,:step].==10,:])
+    trace1 = histogram(x=data[data[!,:step].==10,:], opacity=0.75)
+    layout = Layout(barmode="overlay")
+    pSum = plot(trace1, layout)
+    return pSum
 end
 
 #run_server(app, "0.0.0.0", parse(Int,ARGS[1]); debug = true)

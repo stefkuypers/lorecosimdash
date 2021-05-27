@@ -1,5 +1,11 @@
-using Agents
+module AbmController
+using Agents, Plots
+using Genie.Renderer.Html
+using Tables
+using PrettyTables
 using EconoSim
+using Statistics
+
 # Default properties
 SUMSY = :sumsy
 
@@ -16,8 +22,6 @@ bread = ConsumableBlueprint("Bread")
 tv = ProductBlueprint("TV", Restorable(wear = 0.01))
 
 sumsy_data = Dict{Symbol, Float64}(CONSUMER => 0, BAKER => 0, TV_MERCHANT => 0, GOVERNANCE => 0)
-
-
 
 function init_loreco_model(sumsy::SuMSy = SuMSy(2000, 25000, 0.1, 30, seed = 5000),
                         consumers::Integer = 380,
@@ -37,30 +41,6 @@ function init_loreco_model(sumsy::SuMSy = SuMSy(2000, 25000, 0.1, 30, seed = 500
 
     return model
 end
-
-#=
-function init_loreco_model(sumsy::SuMSy = SuMSy(2000, 25000, 0.1, 30, seed = 5000),
-                        consumersGI::Integer = 380,
-                        consumersNoGI::Integer = 0,
-                        bakers::Integer = 15,
-                        tv_merchants::Integer = 5)
-    # Create a standard Econo model.
-    model = create_econo_model()
-
-    # Add a sumsy property to the model to be used during simulation.
-    model.properties[:sumsy] = sumsy
-
-    # Add actors.
-    add_consumers(model, consumersGI)
-    add_consumers(model, consumersNoGI)
-    add_bakers(model, bakers)
-    add_tv_merchants(model, tv_merchants)
-    add_governance(model, consumers + bakers + tv_merchants)
-
-    return model
-end
-=#
-
 
 """
     add_consumers(model, consumers::Integer)
@@ -202,4 +182,28 @@ function make_loreco(model, actor, needs = nothing)
 
     # If the actor has needs, add marginal behavior to its behavior functions.
     return isnothing(needs) ? actor : make_marginal(actor, needs)
+end
+
+balance(a::Actor) = sumsy_balance(a.balance)
+round_mean(values) = round(mean(values), digits = 2)
+round_std(values) = round(std(values), digits = 2)
+transactions(a::Actor) = sumsy_balance(a.balance)
+
+
+function loreco_run_table()
+    #adata = [:types, balance, :posessions, :stock]
+    adata = [(balance,minimum),(balance,sum),(balance,maximum), (balance, round_mean), (balance, round_std)]
+    model = init_loreco_model()
+    data, _ = run!(model, actor_step!, econo_model_step!, 5; adata)
+    #print(data[1:10, :])
+    #pretty_table(data, formatters = ft_printf("%.3f", [2,3]), highlighters = (hl_lt(0.2), hl_gt(0.8)))
+    #pretty_table(data[1:10, :], backend = :html, formatters = ft_printf("%.3f", [2,3]))
+    #data
+    html(:abm, :table,  steps = Tables.namedtupleiterator(data))
+end
+function loreco_dashboard()
+
+    #html(:abm, :dashboard,  layout = :dashboardlayout)
+    html(:abm, :dashboard, layout = :dashboardlayout)
+end
 end

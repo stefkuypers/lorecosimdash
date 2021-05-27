@@ -1,5 +1,7 @@
 using Agents
-using EconoSim
+using DataStructures
+using .EconoSim
+
 # Default properties
 SUMSY = :sumsy
 
@@ -17,8 +19,58 @@ tv = ProductBlueprint("TV", Restorable(wear = 0.01))
 
 sumsy_data = Dict{Symbol, Float64}(CONSUMER => 0, BAKER => 0, TV_MERCHANT => 0, GOVERNANCE => 0)
 
+"""
+    run_example()
 
+Run a pre-configured example model.
+"""
+function run_example()
+    # Mark runtime start
+    now = time()
+    # Create the Loreco model.
+    model = init_loreco_model()
 
+    # Execute 300 default steps
+    econo_step!(model, 60)
+
+    # Mark runtime end
+    done = time() - now
+
+    for actor in allagents(model)
+        if has_type(actor, CONSUMER)
+            symbol = CONSUMER
+        elseif has_type(actor, BAKER)
+            symbol = BAKER
+        elseif has_type(actor, TV_MERCHANT)
+            symbol = TV_MERCHANT
+        elseif has_type(actor, GOVERNANCE)
+            symbol = GOVERNANCE
+        end
+
+        sumsy_data[symbol] = sumsy_data[symbol] + sumsy_balance(actor)
+    end
+
+    sumsy_data[CONSUMER] = round(sumsy_data[CONSUMER] / 380, digits = 2)
+    sumsy_data[BAKER] = round(sumsy_data[BAKER] / 15, digits = 2)
+    sumsy_data[TV_MERCHANT] = round(sumsy_data[TV_MERCHANT] / 20, digits = 2)
+
+    return sumsy_data
+end
+
+"""
+init_loreco_model(sumsy::SuMSy = SuMSy(2000, 25000, 0.1, 30, seed = 5000),
+                consumers::Integer = 380,
+                bakers::Integer = 15,
+                tv_merchants::Integer = 5)
+
+Creates a pre-configured model.
+
+# Parameters
+* sumsy::SuMSy - The SuMSy model to use.
+* consumers::Integer - The number of consumers.
+* bakers::Integer - The number of bakers.
+* tv_merchants::INteger - The number of TV merchants.
+"""
 function init_loreco_model(sumsy::SuMSy = SuMSy(2000, 25000, 0.1, 30, seed = 5000),
                         consumers::Integer = 380,
                         bakers::Integer = 15,
@@ -37,30 +89,6 @@ function init_loreco_model(sumsy::SuMSy = SuMSy(2000, 25000, 0.1, 30, seed = 500
 
     return model
 end
-
-#=
-function init_loreco_model(sumsy::SuMSy = SuMSy(2000, 25000, 0.1, 30, seed = 5000),
-                        consumersGI::Integer = 380,
-                        consumersNoGI::Integer = 0,
-                        bakers::Integer = 15,
-                        tv_merchants::Integer = 5)
-    # Create a standard Econo model.
-    model = create_econo_model()
-
-    # Add a sumsy property to the model to be used during simulation.
-    model.properties[:sumsy] = sumsy
-
-    # Add actors.
-    add_consumers(model, consumersGI)
-    add_consumers(model, consumersNoGI)
-    add_bakers(model, bakers)
-    add_tv_merchants(model, tv_merchants)
-    add_governance(model, consumers + bakers + tv_merchants)
-
-    return model
-end
-=#
-
 
 """
     add_consumers(model, consumers::Integer)

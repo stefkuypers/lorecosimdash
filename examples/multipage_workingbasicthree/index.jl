@@ -1,6 +1,6 @@
 using DashHtmlComponents, DashCoreComponents
 
-include("app8.jl")
+include("app.jl")
 include("layouts.jl")
 include("callbacks.jl")
 
@@ -13,16 +13,20 @@ end
 
 
 callback!(app, Output("page-content", "children"), Input("url", "pathname")) do pathname
-    println(pathname)
+    #println(pathname)
     if pathname == "/app1"
         layout1
     elseif pathname == "/app2"
         layout2
+    elseif pathname == "/app3"
+        layout3
     elseif pathname =="/"
         html_div() do
-            dcc_link("Navigate to /page-1", href="app1"),
+            dcc_link("Parameter space", href="app1"),
             html_br(),
-            dcc_link("Navigate to /page-2", href="app2")
+            dcc_link("ABM run", href="app2"),
+            html_br(),
+            dcc_link("ABM multi-run", href="app3")
         end
     else
         "404"
@@ -31,5 +35,5 @@ end
 
 
 
-run_server(app, "0.0.0.0", parse(Int64,ARGS[1]))
-#run_server(app, "0.0.0.0", debug=true)
+#run_server(app, "0.0.0.0", parse(Int64,ARGS[1]))
+run_server(app, "0.0.0.0", debug=true)

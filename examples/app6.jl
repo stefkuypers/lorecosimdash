@@ -51,13 +51,12 @@ callback!(
     data, _ = run!(model, actor_step!, econo_model_step!, n_periods; adata)
     print(data[1:5,:])
 
-    data1 = stack(data, [:minimum_balance, :maximum_balance, :median_balance, :mean_balance], :step)
-
-    print(data1[:,:])
-    pMin = Plot(data1, x = :step, y = :value, group = :variable ,mode="markers")
-
-    return pMin
-
+    pSum = Plot(data, x = :step, y = :sum_balance, name="total")
+    pMin = Plot(data, x = :step, y = :minimum_balance, name="minimum")
+    pMax = Plot(data, x = :step, y = :maximum_balance, name="maximum")
+    pMedian = Plot(data, x = :step, y = :median_balance, name="median")
+    return ([pSum pMedian
+     pMin pMax])
 end
 
 #run_server(app, "0.0.0.0", parse(Int,ARGS[1]); debug = true)
