@@ -1,17 +1,17 @@
-using DataStructures, DataFrames, Dash, DashHtmlComponents, DashCoreComponents, PlotlyJS, Statistics
+using DataStructures, DataFrames, Dash, DashHtmlComponents, DashCoreComponents, DashBootstrapComponents, PlotlyJS, Statistics
 #using EconoSim
 
 #include("loreco_sim.jl")
 
-app = dash(suppress_callback_exceptions = true)
+app = dash(external_stylesheets=[dbc_themes.BOOTSTRAP])
 
 
-
+#=
 demfreeyesno = [
     Dict("label" => "Nee", "value" => "false"),
     Dict("label" => "Ja", "value" => "true")
 ]
-
+=#
 demurfree = 25000
 
 tiersvec = [(25000,10.0), (30000,15.0), (40000,20.0)]
@@ -25,8 +25,8 @@ app.layout = html_div() do
         ]),
     html_div(id = "addtierdiv", children = [
         html_label("Add tier:"),
-        dcc_input(id="addtiervalue", type="number", min=0, step=500, placeholder="Bedrag"),
-        dcc_input(id="addtierperc", type="number",  min=0, step=0.25, max=100, placeholder="Percentage"),
+        dcc_input(id="addtiervalue", type="number", min=500, step=500, value=1000, placeholder="Bedrag"),
+        dcc_input(id="addtierperc", type="number",  min=0, step=0.25, max=100, value = 5, placeholder="Percentage"),
         html_button(id = "addtier",  children = "voeg tier toe", n_clicks = 0),
         html_label(id="tiernotification")
     ]),
@@ -65,27 +65,19 @@ callback!(app, Output("tiersul", "children"),  Output("buffernotification", "chi
     tiernotification = ""
     if trig == "addtier.n_clicks"
         println("adding sumsy tier")
-        println(addtiervalue)
+    #=    println(addtiervalue)
         println(addtierperc)
+        println(typeof(addtiervalue))
+        println(typeof(addtierperc))=#
         if !isnothing(addtiervalue) && !isnothing(addtierperc)
-            addtier(addtiervalue, addtierperc)
+            addatier(addtiervalue, addtierperc)
             tiernotification = ""
         else
-            tiernotification = "Bedrag en/of percentage zijn niet gegeven."
+            tiernotification = "Bedrag en/of percentage zijn niet gegeven of incorrect."
         end
     end
     if occursin("removetier_",trig)
-        println(removetiers)
-        i = 1
-        while(i <= length(removetiers))
-            #println(removetiers[i])
-            if removetiers[i] == 1
-                splice!(tiersvec, i)
-                break
-            end
-            i += 1
-        end
-        println(tiersvec)
+        removetier(removetiers)
     end
     #if getfield(callback_context(), :triggered)[0]
     #=if sumsy_demfree_yesno == "true"
@@ -109,13 +101,50 @@ end
 function setdemur(value)
     #if (value < 0) throw(PreventUpdate())
     demurfree = value
-    if !isempty(tiersvec) tiersvec[1] = (value,tiersvec[1][2]) end
-end
-function addtier(value, perc)
-    append!(tiersvec, [(value, perc)])
-end
-function removetier()
+    for i = 1:length(tiersvec)
+        println(tiersvec[i][1])
+    end
 
+    while(true)
+        if !isempty(tiersvec) && tiersvec[1][1] < value
+            splice!(tiersvec, 1)
+        else
+            break
+        end
+    end
+
+    if value != 0 && !isempty(tiersvec) tiersvec[1] = (value,tiersvec[1][2]) end
+end
+
+function addatier(tier, perc)
+    for i = 1:length(tiersvec)
+        if tiersvec[i][1] == tier
+            splice!(tiersvec, i)
+            break
+        end
+    end
+#    println(demurfree)
+#    println(tier)
+#    println(typeof(demurfree))
+#    println(typeof(tier))
+#    if tier < demurfree
+#        demurfree = tier
+#    end
+    append!(tiersvec, [(tier, perc)])
+end
+
+function removetier(removetiers)
+    println(removetiers)
+    i = 1
+    while(i <= length(removetiers))
+        #println(removetiers[i])
+        if removetiers[i] == 1
+            splice!(tiersvec, i)
+            break
+        end
+        i += 1
+    end
+    println(tiersvec)
 end
 #=
 callback!(app, Output("sumsy_demfree", "type"), Input("sumsy_demfree_yesno", "value")) do sumsy_demfree_yesno
