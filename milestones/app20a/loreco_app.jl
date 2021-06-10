@@ -94,10 +94,9 @@ governance(a::Actor)::Bool = in(:governance, getproperty(a, :types)) ? true : fa
 function miss5thPercentile(values) return isempty(skipmissing(values)) ? NaN : quantile(skipmissing(values), 0.05) end
 function miss95thPercentile(values) return isempty(skipmissing(values)) ? NaN : quantile(skipmissing(values), 0.95) end
 
-#=
 function isDemurTransaction(comment::String, time::Integer)::Bool
-    #println(step)
-    if startswith(comment, "Demurrage") #& isequal(time, step)
+
+    if startswith(comment, "Demurrage") #& isequal(time, 31)
     #    print(time)
         return true
     else return false
@@ -113,16 +112,4 @@ end
 
 function demurrage(a::Actor)
     sumsy_demurrage(a.balance)
-end
-=#
-
-
-function demurrageviamodel(model)::Float64
-    sumdemurrage::Float64 = 0
-    for x in allagents(model)
-        demurrages = filter(tuple-> let (time, type, entry, amount, comment)=tuple; isCurrentDemurTransaction(comment, time, model.step) end,
-                      collect(x.balance.transactions))
-        isempty(demurrages) ? sumdemurrage = sumdemurrage + 0 : sumdemurrage = sumdemurrage + sum(-y[4] for y in demurrages)
-    end
-    return sumdemurrage
 end
