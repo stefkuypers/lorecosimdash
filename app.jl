@@ -183,7 +183,6 @@ callback!(
         (demurrage, minimum, consumerngi), (demurrage, maximum, consumerngi), (demurrage, mean, consumerngi), (demurrage, median, consumerngi),
         (demurrage, minimum, baker), (demurrage, maximum, baker), (demurrage, mean, baker), (demurrage, median, baker),
         (demurrage, minimum, tvmerchant), (demurrage, maximum, tvmerchant), (demurrage, mean, tvmerchant), (demurrage, median, tvmerchant)]
-    mdata = [demurrageviamodel]
     #adata = [(balance,minimum),(balance,sum),(balance,maximum), (balance, mean),(balance, median), (balance, std)]
 
     #dem = dem / 100
@@ -195,7 +194,7 @@ callback!(
     #model = init_loreco_model_sumsy(;guaranteed_income, dem_free,dem, interval, seed, consumers, bakers, tv_merchants)
     #model = init_loreco_model_sumsy_tiers(;guaranteed_income, dem_free,tiersvec, interval, seed, consumers, bakers, tv_merchants)
     model = init_loreco_model_sumsy_tiers_consumersngi(;guaranteed_income, dem_free,tiersvec, interval, seed, consumers, consumersngi, bakers, tv_merchants)
-    data, modeldata = run!(model, actor_step!, econo_model_step!, n_periods*30; adata, mdata)
+    data = run!(model, actor_step!, econo_model_step!, n_periods*30; adata)
     #print(data[1:5,:])
 
     dataM = stack(data, :sum_balance, :step)
