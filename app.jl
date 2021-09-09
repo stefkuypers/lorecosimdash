@@ -194,7 +194,7 @@ callback!(
     #model = init_loreco_model_sumsy(;guaranteed_income, dem_free,dem, interval, seed, consumers, bakers, tv_merchants)
     #model = init_loreco_model_sumsy_tiers(;guaranteed_income, dem_free,tiersvec, interval, seed, consumers, bakers, tv_merchants)
     model = init_loreco_model_sumsy_tiers_consumersngi(;guaranteed_income, dem_free,tiersvec, interval, seed, consumers, consumersngi, bakers, tv_merchants)
-    data = run!(model, actor_step!, econo_model_step!, n_periods*30; adata)
+    data, _ = run!(model, actor_step!, econo_model_step!, n_periods*30; adata)
     #print(data[1:5,:])
 
     dataM = stack(data, :sum_balance, :step)
@@ -273,5 +273,5 @@ end
 
 
 
-run_server(app, "0.0.0.0", parse(Int,ARGS[1]); debug = true)
-#run_server(app, "0.0.0.0"; debug = true)
+#run_server(app, "0.0.0.0", parse(Int,ARGS[1]); debug = true)
+run_server(app, "0.0.0.0"; debug = true)
