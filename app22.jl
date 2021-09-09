@@ -272,5 +272,5 @@ function removetier(removetiers)
     println(tiersvec)
 end
 
-#run_server(app, "0.0.0.0", parse(Int,ARGS[1]); debug = true)
-run_server(app, "0.0.0.0"; debug = true)
+run_server(app, "0.0.0.0", parse(Int,ARGS[1]); debug = true)
+#run_server(app, "0.0.0.0"; debug = true)
