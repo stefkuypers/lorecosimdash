@@ -1,1 +1,1 @@
-web: julia --project withouteconosim.jl $PORT
+web: julia --project app22.jl $PORT
