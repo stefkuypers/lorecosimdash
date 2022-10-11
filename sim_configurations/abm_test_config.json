@@ -1,0 +1,99 @@
+[
+    {
+        "type": "configuration",
+        "commercial": ["merchant"],
+        "non_profit": ["association"],
+        "institution": ["governance"],
+        "private": ["civilian", "beneficiary"]
+    },
+    {
+        "type": "merchant",
+        "number": 1,
+        "linked_to": ["civilian", "beneficiary"],
+        "own_wage": 15,
+        "employees": 1,
+        "wage": 10,
+        "max_customers": 10,
+        "max_non_profit": 2,
+        "non_profit_donation": 10,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 100,
+                "demurrage": [[0, 1], [100, 2.5]]
+            },
+        "prices":
+            {
+                "Jupiler": 2,
+                "Duvel": 4
+            }
+    },
+    {
+        "type": "association",
+        "number": 1,
+        "max_volunteers": 1,
+        "volunteer_need": 1,
+        "max_customers": 10,
+        "payout": 5,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 100,
+                "demurrage": 1
+            },
+        "prices":
+            {
+                "Koffie": 2,
+                "Thee": 4
+            }
+    },
+    {
+        "type": "governance",
+        "number":1,
+        "max_customers": 10,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 0
+            },
+        "prices":
+            {
+                "Zwembad": 3,
+                "Container park": 4
+            }
+    },
+    {
+        "type": "beneficiary",
+        "number": 1,
+        "sumsy_overrides":
+            {
+                "seed": 100,
+                "income": 16,
+                "dem_free": 100,
+                "demurrage": 2.5
+            },
+        "needs":
+            {
+                "Duvel": [[2, 1], [5, 0.5]],
+                "Koffie": [[1, 1]],
+                "Zwembad": [[1, 0.5]]
+            }
+    },
+    {
+        "type": "civilian",
+        "number": 1,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 100,
+                "demurrage": 2.5
+            },
+        "needs":
+            {
+                "Jupiler": [[3, 1], [7, 0.5]],
+                "Thee": [[1, 1]],
+                "Container park": [[1, 0.2]]
+            }
+    }
+]

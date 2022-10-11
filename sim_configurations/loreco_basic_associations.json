@@ -1,0 +1,105 @@
+[
+    {
+        "type": "configuration",
+        "commercial": ["merchant"],
+        "non_profit": ["association"],
+        "private": ["beneficiary"]
+    },
+    {
+        "type": "merchant",
+        "number": 3,
+        "max_non_profit": 1,
+        "non_profit_donation": 25,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 2.5
+            },
+        "prices":
+            {
+                "A": 3
+            }
+    },
+    {
+        "type": "merchant",
+        "number": 3,
+        "max_non_profit": 1,
+        "non_profit_donation": 10,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 2.5
+            },
+        "prices":
+            {
+                "B": 3
+            }
+    },
+    {
+        "type": "merchant",
+        "number": 6,
+        "max_non_profit": 1,
+        "non_profit_donation": 5,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 2.5
+            },
+        "prices":
+            {
+                "C": 3
+            }
+    },
+    {
+        "type": "merchant",
+        "number": 2,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 2.5
+            },
+        "prices":
+            {
+                "D": 3
+            }
+    },
+    {
+        "type": "association",
+        "number": 2,
+        "max_volunteers": 10,
+        "volunteer_need": 1,
+        "payout": 5,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 2.5
+            },
+        "prices":
+            {
+                "E": 3
+            }
+    },
+    {
+        "type": "beneficiary",
+        "number": 84,
+        "sumsy_overrides":
+            {
+                "income": 16,
+                "dem_free": 5,
+                "demurrage": 2.5
+            },
+        "needs":
+            {
+                "A": [[2, 1], [5, 0.5]],
+                "B": [[1, 1]],
+                "C": [[1, 0.5]],
+                "D": [[1, 0.01]],
+                "E": [[1, 0.5], [3, 0.1]]
+            }
+    }
+]

@@ -1,0 +1,80 @@
+[
+    {
+        "type": "configuration",
+        "commercial": ["merchant"],
+        "private": ["beneficiary"]
+    },
+    {
+        "type": "merchant",
+        "number": 3,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 2.5
+            },
+        "prices":
+            {
+                "A": 3
+            }
+    },
+    {
+        "type": "merchant",
+        "number": 3,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 2.5
+            },
+        "prices":
+            {
+                "B": 3
+            }
+    },
+    {
+        "type": "merchant",
+        "number": 6,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 2.5
+            },
+        "prices":
+            {
+                "C": 3
+            }
+    },
+    {
+        "type": "merchant",
+        "number": 2,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 2.5
+            },
+        "prices":
+            {
+                "D": 3
+            }
+    },
+    {
+        "type": "beneficiary",
+        "number": 84,
+        "sumsy_overrides":
+            {
+                "income": 16,
+                "dem_free": 5,
+                "demurrage": 2.5
+            },
+        "needs":
+            {
+                "A": [[2, 1], [5, 0.5]],
+                "B": [[1, 1]],
+                "C": [[1, 0.5]],
+                "D": [[1, 0.01]]
+            }
+    }
+]
