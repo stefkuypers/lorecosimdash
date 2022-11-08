@@ -114,7 +114,7 @@ function read_data()
                     id_dict[transaction_file.fromOwner[i]][2],
                     id_dict[transaction_file.toOwner[i]][1],
                     id_dict[transaction_file.toOwner[i]][2],
-                    parse(Currency, replace(transaction_file.amount[i], "," => ".")),
+                    parse(Currency, replace(replace(transaction_file.amount[i], "." => ""), "," => ".")),
                     transaction_type(string(transaction_file.fromOwner[i]),
                                         string(transaction_file.type[i]),
                                         string(transaction_file.description[i]),
@@ -322,7 +322,7 @@ function analyse_activity(data = read_data(); transaction_type = PAY, types = [H
     return activity
 end
 
-function analyse_transactions(data, type::String; direction::Direction, transaction_type = PAY)
+function get_activity(data, type::String; direction = both, transaction_type = PAY)
     activity = Dict{Integer, Integer}() # id => num_transactions
 
     rows = eachrow(data)
@@ -339,6 +339,11 @@ function analyse_transactions(data, type::String; direction::Direction, transact
         collect_activities!(rows, type, d_id, d_type, transaction_type, activity)
     end
 
+    return activity
+end
+
+function analyse_transactions(data, type::String; direction::Direction = both, transaction_type = PAY)
+    activity = get_activity(data, type, direction = direction, transaction_type = transaction_type)
     frequency = Dict{Integer, Integer}() # num_transaction => num_accounts
 
     for key in keys(activity)
@@ -460,4 +465,21 @@ function plot_accounts(type::String, transaction_type = PAY)
     plot!(all_tx, label = "Totaal transacties", marker = :circle)
     plot!(in_tx, label = "Inkomend", color = :green, marker = :circle)
     plot!(out_tx, label = "Uitgaand", color = :red, marker = :circle)
+end
+
+function top_users(type::String, number::Integer)
+    users = read_users()
+    activity = reverse(sort(collect(get_activity(read_data(), type)), by = x -> x[2]))
+    number = min(number, length(activity))
+    top_users = Vector{String}()
+
+    for i = 1:number
+        for pair in pairs(users)
+            if pair[2][1] == activity[i][1]
+                push!(top_users, pair[1])
+            end
+        end
+    end
+
+    return top_users
 end
