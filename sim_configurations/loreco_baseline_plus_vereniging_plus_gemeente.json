@@ -1,0 +1,302 @@
+[
+    {
+        "type": "configuration",
+        "commercial": ["merchant"],
+        "private": ["beneficiary", "non_beneficiary"],
+	    "non_profit": ["association_groot", "association_groot2" , "association_klein"],
+        "institution": ["Gemeente"],
+        "currency_provider": ["Klavermerchant"]
+    },
+{
+        "number": 1,
+        "type": "Gemeente",
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 0.5
+            },
+        "prices":
+            {
+                "zwembad": 3,
+                "containerpark": 4,
+                "vergaderzaal": 150,
+                "Klaveraankoop_gemeente": 1
+            },
+        "needs":
+            {
+                "zeer_succesvol": [[1, 0.25], [5, 0.125]],
+                "succesvol": [[1, 0.25]],
+                "weinig_succesvol": [[1, 0.125]],
+                "onsuccesvol": [[1, 0.0025]]
+             }
+   },
+    {
+        "number": 3,
+        "type": "merchant",
+        "linked_to": ["beneficiary"],
+        "max_non_profit": 3,
+        "non_profit_donation": 30,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 0.5
+            },
+        "prices":
+            {
+                "zeer_succesvol": 3,
+                "Klaveraankoop_merchant": 1
+            },
+        "needs":
+            {
+                "zeer_succesvol": [[1, 0.5], [5, 0.25]],
+                "succesvol": [[1, 0.5]],
+                "weinig_succesvol": [[1, 0.25]],
+                "onsuccesvol": [[1, 0.005]],
+            "vergaderzaal": [[1, 0.5]],
+            "containerpark": [[1, 0.5]]
+             }
+    },
+    {
+        "number": 3,
+        "type": "merchant",
+        "linked_to": ["beneficiary"],
+        "max_non_profit": 3,
+        "non_profit_donation": 20,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 0.5
+            },
+        "prices":
+            {
+                "succesvol": 3,
+                "Klaveraankoop_merchant": 1
+            },
+        "needs":
+            {
+                "zeer_succesvol": [[1, 0.5], [5, 0.25]],
+                "succesvol": [[1, 0.5]],
+                "weinig_succesvol": [[1, 0.25]],
+                "onsuccesvol": [[1, 0.005]],
+                "vergaderzaal": [[1, 0.3]],
+                "containerpark": [[1, 0.5]]
+            }
+    },    
+    {
+        "number": 6,
+        "type": "merchant",
+        "linked_to": ["beneficiary"],
+        "max_non_profit": 3,
+        "non_profit_donation": 15,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 0.5
+            },
+        "prices":
+            {
+                "weinig_succesvol": 3,
+                "Klaveraankoop_merchant": 1
+            },
+        "needs":
+            {
+                "zeer_succesvol": [[1, 0.5], [5, 0.25]],
+                "succesvol": [[1, 0.5]],
+                "weinig_succesvol": [[1, 0.25]],
+                "onsuccesvol": [[1, 0.005]],
+                "vergaderzaal": [[1, 0.2]],
+                "containerpark": [[1, 0.5]]
+            }
+    }, 
+    {
+        "number": 2,
+        "type": "merchant",
+        "linked_to": ["beneficiary"],
+        "max_non_profit": 3,
+        "non_profit_donation": 10,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 0.5
+            },
+        "prices":
+            {
+                "onsuccesvol": 3,
+                "Klaveraankoop_merchant": 1
+            },
+        "needs":
+            {
+                "zeer_succesvol": [[1, 0.5], [5, 0.25]],
+                "succesvol": [[1, 0.5]],
+                "weinig_succesvol": [[1, 0.25]],
+                "onsuccesvol": [[1, 0.005]],
+                "vergaderzaal": [[1, 0.01]],
+                "containerpark": [[1, 0.3]]
+            }
+    },    
+    {
+        "number": 5,
+        "type": "association_groot",
+        "max_volunteers": 10,
+        "volunteer_need": 10,
+        "max_customers": 10,
+        "payout": 0,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 0.5
+            },
+        "prices":
+            {
+                "Cafetaria_groot": 3,
+		        "Inschrijvingsgeld_groot":25,
+                "Klaveraankoop_vereniging": 1
+            },
+        "needs":
+            {
+                "zeer_succesvol": [[1, 0.5], [5, 0.25]],
+                "succesvol": [[1, 0.5]],
+                "weinig_succesvol": [[1, 0.25]],
+                "onsuccesvol": [[1, 0.005]],
+                "vergaderzaal": [[1, 0.1]],
+                "containerpark": [[1, 0.25]]
+            }
+    },
+    {
+        "number": 3,
+        "type": "association_groot2",
+        "max_volunteers": 10,
+        "volunteer_need": 10,
+        "max_customers": 20,
+        "payout": 20,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 0.5
+            },
+        "prices":
+            {
+                "Cafetaria_groot2": 3,
+                "Klaveraankoop_vereniging": 1
+            },
+        "needs":
+            {
+                "zeer_succesvol": [[1, 0], [5, 0]],
+                "succesvol": [[1, 0]],
+                "weinig_succesvol": [[1, 0]],
+                "onsuccesvol": [[1, 0]],
+                "vergaderzaal": [[1, 0.1]],
+                "containerpark": [[1, 0.25]]
+            }
+    },
+    {
+        "number": 10,
+        "type": "association_klein",
+        "max_volunteers": 5,
+        "volunteer_need": 5,
+        "max_customers": 15,
+        "payout": 20,
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 0,
+                "demurrage": 0.5
+            },
+        "prices":
+            {
+                "Cafetaria_klein": 3,
+		        "Inschrijvingsgeld_klein": 8,
+                "Klaveraankoop_vereniging": 1
+            },
+        "needs":
+            {
+                "zeer_succesvol": [[1, 0.5], [5, 0.25]],
+                "succesvol": [[1, 0.5]],
+                "weinig_succesvol": [[1, 0.25]],
+                "onsuccesvol": [[1, 0.005]],
+                "vergaderzaal": [[1, 0.025]],
+                "containerpark": [[1, 0.1]]
+            }
+    },
+    {
+        "number": 84,
+        "type": "beneficiary",
+        "sumsy_overrides":
+            {
+                "income": 16,
+                "dem_free": 5,
+                "demurrage": 2.5
+            },
+        "needs":
+            {
+                "zeer_succesvol": [[2, 1], [5, 0.5]],
+                "succesvol": [[1, 1]],
+                "weinig_succesvol": [[1, 0.5]],
+                "onsuccesvol": [[1, 0.01]],
+                "prod_GI": [[1, 0.01]],
+                "prod_Non_GI": [[1, 0.05]],
+                "Cafetaria_groot": [[2, 1],[4, 0.25]],
+                "Inschrijvingsgeld_groot":[[1, 0.15]],
+                "Cafetaria_groot2": [[2, 1],[4, 0.25]],
+                "Cafetaria_klein": [[2, 1],[4, 0.25]],
+                "Inschrijvingsgeld_klein": [[1, 0.15]],	
+                "zwembad": [[2, 0.5],[2, 0.25]],
+                "containerpark": [[1, 0.3]]
+            },
+        "prices":
+            {
+                "prod_GI": 2.5,
+                "Klaveraankoop_GI": 1
+            }
+    },
+    {
+        "number": 50,
+        "type": "non_beneficiary",
+        "sumsy_overrides":
+            {
+                "income": 0,
+                "dem_free": 5,
+                "demurrage": 2.5
+            },
+        "needs":
+            {
+                "zeer_succesvol": [[2, 1], [5, 0.5]],
+                "succesvol": [[1, 1]],
+                "weinig_succesvol": [[1, 0.5]],
+                " onsuccesvol ": [[1, 0.01]],
+                "prod_GI": [[1, 0.01]],
+                "prod_Non_GI": [[1, 0.05]],
+                "Cafetaria_groot": [[2, 1],[4, 0.25]],
+                "Inschrijvingsgeld_groot":[[1, 0.15]],
+                "Cafetaria_groot2": [[2, 1],[4, 0.25]],
+                "Cafetaria_klein": [[2, 1],[4, 0.25]],
+                "Inschrijvingsgeld_klein": [[1, 0.15]],
+                "zwembad": [[2, 0.25],[2, 0.125]],
+                "containerpark": [[1, 0.3]]
+            },
+        "prices":
+            {
+                "prod_Non_GI": 2.5,
+                "Klaveraankoop_GI": 1
+            }
+    },
+    {
+        "number": 1,
+        "type": "Klavermerchant",
+        "needs":
+            {
+                "Klaveraankoop_merchant": [[5, 0.01]],
+                "Klaveraankoop_GI": [[5, 0.15]],
+                "Klaveraankoop_non_GI": [[5, 0.05]],
+                "Klaveraankoop_vereniging": [[5, 0.01]],  
+                "Klaveraankoop_gemeente": [[5, 0.5]] 
+            }
+    }
+]
