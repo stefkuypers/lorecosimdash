@@ -5,6 +5,8 @@ using DataFrames
 
 TYPE = "type"
 NUMBER = "number"
+CURRENCY_DEMAND = "currency_demand"
+CURRENCY_AMOUNT = "currency_amount"
 SUMSY_OVERRIDES = "sumsy_overrides"
 PRICES = "prices"
 NEEDS = "needs"
@@ -60,10 +62,10 @@ function init_transaction_statistics_trigger(balance::Balance)
     balance.transactions_out = 0
     balance.transaction_volume_out = Currency(0)
 
-    return transaction_ststistics_trigger
+    return transaction_statistics_trigger
 end
 
-function transaction_ststistics_trigger(balance::Balance,
+function transaction_statistics_trigger(balance::Balance,
                                         entry::BalanceEntry,
                                         type::EntryType,
                                         amount::Real,
@@ -71,12 +73,22 @@ function transaction_ststistics_trigger(balance::Balance,
                                         comment::String,
                                         value::Currency,
                                         transaction::Union{Transaction, Nothing})
-    if amount > 0
-        balance.transactions_in += 1
-        balance.transaction_volume_in += Currency(amount)
-    elseif amount < 0
-        balance.transactions_out += 1
-        balance.transaction_volume_out -= Currency(amount)
+    if comment != "Net income"
+        if amount > 0
+            balance.transactions_in += 1
+            balance.transaction_volume_in += Currency(amount)
+        elseif amount < 0
+            balance.transactions_out += 1
+            balance.transaction_volume_out -= Currency(amount)
+        end
+    end
+end
+
+function acquire_currency(model, actor::Actor)
+    demands = process(actor.currency_demand)
+
+    if demands > 0
+        transfer_asset!(model.currency_balance, actor.balance, SUMSY_DEP, demands * actor.currency_amount, model.step)
     end
 end
 
@@ -84,6 +96,8 @@ function create_actors!(model,
                         actor_dict::Dict{Symbol, Vector{Actor}},
                         type::Symbol,
                         overrides::SuMSyOverrides,
+                        currency_demand::Marginality,
+                        currency_amount::Real,
                         needs::Needs,
                         prices::Prices,
                         number::Integer;
@@ -92,9 +106,12 @@ function create_actors!(model,
 
     for counter = 1:number
         stock = InfiniteStock(keys(prices))
-        actor =  make_marginal(Actor(types = type, stock = stock), needs = needs, select_supplier = select_known_supplier)
+        actor =  make_marginal(Actor(types = type, stock = stock), needs = needs, select_supplier = select_supplier)
         set_sumsy_overrides!(actor.balance, overrides)
         add_triggers!(actor.balance, init_transaction_statistics_trigger)
+
+        actor.currency_demand = currency_demand
+        actor.currency_amount = currency_amount
 
         actor.transactions_in = 0
         actor.transaction_volume_in = Currency(0)
@@ -105,6 +122,7 @@ function create_actors!(model,
             add_behavior!(actor, behavior)
         end
 
+        add_behavior!(actor, acquire_currency)
         add_behavior!(actor, log_transaction_statistics)
         add_agent!(actor, model)
         push!(new_actors, actor)
@@ -138,7 +156,7 @@ function donate(model, merchant::Actor)
         while !isempty(non_profits)
             index = rand(1:length(non_profits))
             non_profit = non_profits[index]
-            sumsy_transfer!(merchant.balance, non_profit.balance, model.sumsy, merchant.non_profit_donation, model.step)
+            transfer_sumsy!(merchant.balance, non_profit.balance, model.sumsy, merchant.non_profit_donation, model.step)
             deleteat!(non_profits, index)
         end
     end
@@ -147,7 +165,7 @@ end
 function pay_wages(model, merchant::Actor)
     if process_ready(model.sumsy, model.step)
         if !isnothing(merchant.linked_actor)
-            sumsy_transfer!(merchant.balance, merchant.linked_actor.balance, model.sumsy, merchant.own_wage, model.step)
+            transfer_sumsy!(merchant.balance, merchant.linked_actor.balance, model.sumsy, merchant.own_wage, model.step)
         end
 
         employees = Vector{Actor}(merchant.employees)
@@ -156,7 +174,7 @@ function pay_wages(model, merchant::Actor)
         while !isempty(employees)
             index = rand(1:length(employees))
             employee = employees[index]
-            sumsy_transfer!(merchant.balance, employee.balance, model.sumsy, merchant.wage, model.step)
+            transfer_sumsy!(merchant.balance, employee.balance, model.sumsy, merchant.wage, model.step)
             deleteat!(employees, index)
         end
     end
@@ -168,6 +186,8 @@ function create_commercial!(model,
                             offer_dict::Dict{<:Blueprint, Vector{Actor}},
                             demand_dict::Dict{<:Blueprint, Vector{Actor}},
                             linked_to::Vector{Any},
+                            currency_demand::Marginality,
+                            currency_amount::Real,
                             needs::Needs,
                             overrides::SuMSyOverrides,
                             prices::Prices,
@@ -178,7 +198,7 @@ function create_commercial!(model,
                             max_non_profit::Integer,
                             non_profit_donation::Currency,
                             number::Integer = 1)
-    merchants = create_actors!(model, actor_dict, type, overrides, needs, prices, number, additional_behaviors = [donate, pay_wages])
+    merchants = create_actors!(model, actor_dict, type, overrides, currency_demand, currency_amount, needs, prices, number, additional_behaviors = [donate, pay_wages])
 
     for i in 1:length(linked_to)
         linked_to[i] = Symbol(linked_to[i])
@@ -195,6 +215,7 @@ function create_commercial!(model,
         merchant.non_profit = Vector{Actor}()
         merchant.max_non_profit = max_non_profit
         merchant.non_profit_donation = non_profit_donation
+        merchant.merchants = Dict{Blueprint, Vector{Actor}}()
         update_offers_demands!(merchant, offer_dict, demand_dict)
     end
 
@@ -211,7 +232,7 @@ function pay_volunteers(model, non_profit::Actor)
 
             if rand() <= non_profit.volunteer_need
                 volunteer = volunteers[index]
-                sumsy_transfer!(non_profit.balance, volunteer.balance, model.sumsy, non_profit.payout, model.step)
+                transfer_sumsy!(non_profit.balance, volunteer.balance, model.sumsy, non_profit.payout, model.step)
             end
 
             deleteat!(volunteers, index)
@@ -224,6 +245,8 @@ function create_non_profit!(model,
                             actor_dict::Dict{Symbol, Vector{Actor}},
                             offer_dict::Dict{<:Blueprint, Vector{Actor}},
                             demand_dict::Dict{<:Blueprint, Vector{Actor}},
+                            currency_demand::Marginality,
+                            currency_amount::Real,
                             needs::Needs,
                             overrides::SuMSyOverrides,
                             max_volunteers::Integer,
@@ -232,7 +255,7 @@ function create_non_profit!(model,
                             max_customers::Integer,
                             prices::Prices,
                             number::Integer)
-    non_profit = create_actors!(model, actor_dict, type, overrides, needs, prices, number, additional_behaviors = [pay_volunteers])
+    non_profit = create_actors!(model, actor_dict, type, overrides, currency_demand, currency_amount, needs, prices, number, additional_behaviors = [pay_volunteers])
 
     for non_profit in non_profit
         non_profit.volunteers = Vector{Actor}()
@@ -243,6 +266,7 @@ function create_non_profit!(model,
         non_profit.max_customers = max_customers == 0 ? INF : max_customers
         non_profit.num_customers = 0
         non_profit.donors = 0
+        non_profit.merchants = Dict{Blueprint, Vector{Actor}}()
         update_offers_demands!(non_profit, offer_dict, demand_dict)
     end
 
@@ -254,17 +278,20 @@ function create_institution!(model,
                             actor_dict::Dict{Symbol, Vector{Actor}},
                             offer_dict::Dict{<:Blueprint, Vector{Actor}},
                             demand_dict::Dict{<:Blueprint, Vector{Actor}},
+                            currency_demand::Marginality,
+                            currency_amount::Real,
                             needs::Needs,
                             overrides::SuMSyOverrides,
                             prices::Prices,
                             max_customers::Integer,
                             number::Integer = 1)
-    governances = create_actors!(model, actor_dict, type, overrides, needs, prices, number)
+    governances = create_actors!(model, actor_dict, type, overrides, currency_demand, currency_amount, needs, prices, number)
 
     for governance in governances
         governance.prices = prices
         governance.max_customers = max_customers == 0 ? INF : max_customers
         governance.num_customers = 0
+        governance.merchants = Dict{Blueprint, Vector{Actor}}()
         update_offers_demands!(governance, offer_dict, demand_dict)
     end
 
@@ -276,16 +303,19 @@ function create_private!(model,
                             actor_dict::Dict{Symbol, Vector{Actor}},
                             offer_dict::Dict{<:Blueprint, Vector{Actor}},
                             demand_dict::Dict{<:Blueprint, Vector{Actor}},
+                            currency_demand::Marginality,
+                            currency_amount::Real,
                             needs::Needs,
                             overrides::SuMSyOverrides,
                             prices::Prices,
                             number::Integer = 1)
-    civilians = create_actors!(model, actor_dict, type, overrides, needs, prices, number)
+    civilians = create_actors!(model, actor_dict, type, overrides, currency_demand, currency_amount, needs, prices, number)
 
     for civilian in civilians
         civilian.merchants = Dict{Blueprint, Vector{Actor}}()
-        civilian.volunteering = 0
         update_offers_demands!(civilian, offer_dict, demand_dict)
+        civilian.prices = prices
+        civilian.volunteering = 0
     end
 
     return actor_dict
@@ -300,6 +330,16 @@ function create_prices!(price_dict, blueprints::Dict{String, Blueprint})
     end
 
     return prices
+end
+
+function create_marginality(input)
+    marginality = Marginality()
+
+    for pair in input
+        push!(marginality, (pair[1], pair[2]))
+    end
+
+    return marginality
 end
 
 function create_needs(needs_dict, blueprints)
@@ -323,8 +363,9 @@ function create_needs(needs_dict, blueprints)
     return needs
 end
 
-function select_known_supplier(model, customer::Actor, blueprint::Blueprint)
-    if hasproperty(customer, :merchants)
+function select_supplier(model, customer::Actor, blueprint::Blueprint)
+
+    if hasproperty(customer, :merchants) & haskey(customer.merchants, blueprint)
         suppliers = customer.merchants[blueprint]
 
         return suppliers[rand(1:length(suppliers))]
@@ -370,33 +411,40 @@ function link_customers!(actor_dict::Dict{Symbol, Vector{Actor}}, offers::Dict{<
 
             while !isempty(wants)
                 want = wants[1]
-                merchants = offers[want]
-                m_index = rand(1:length(merchants))
-                merchant = merchants[m_index]
-                merchant.num_customers += 1
+                deleteat!(wants, 1)
 
-                if merchant.num_customers == merchant.max_customers
-                    deleteat!(merchants, m_index)
-                end
+                if haskey(offers, want)
+                    merchants = offers[want]
 
-                want_suppliers = get!(actor.merchants, want, Vector{Actor}())
+                    if length(merchants) > 0
+                        m_index = rand(1:length(merchants))
+                        merchant = merchants[m_index]
+                        merchant.num_customers += 1
 
-                if !(merchant in want_suppliers)
-                    push!(want_suppliers, merchant)
-                end
+                        if merchant.num_customers == merchant.max_customers
+                            deleteat!(merchants, m_index)
+                        end
 
-                # Choose the same merchant if they offer other products the consumer wants.
-                for offer in keys(merchant.prices)
-                    index = findfirst(bp -> bp == offer, wants)
-
-                    if !isnothing(index)
-                        want_suppliers = get!(actor.merchants, offer, Vector{Actor}())
+                        want_suppliers = get!(actor.merchants, want, Vector{Actor}())
 
                         if !(merchant in want_suppliers)
                             push!(want_suppliers, merchant)
                         end
 
-                        deleteat!(wants, index)
+                        # Choose the same merchant if they offer other products the consumer wants.
+                        for offer in keys(merchant.prices)
+                            index = findfirst(bp -> bp == offer, wants)
+
+                            if !isnothing(index)
+                                want_suppliers = get!(actor.merchants, offer, Vector{Actor}())
+
+                                if !(merchant in want_suppliers)
+                                    push!(want_suppliers, merchant)
+                                end
+
+                                deleteat!(wants, index)
+                            end
+                        end
                     end
                 end
             end
@@ -440,7 +488,7 @@ end
 function link_actors(actor_dict::Dict{Symbol, Vector{Actor}}, offers, demands)
     selected_linked = Set{Actor}()
     
-    # Link a commercial actors with their non commercial actor
+    # Link a commercial actor with their non commercial actor
     for commercial in collect_category(actor_dict, COMMERCIAL)
         linked_group = Set{Actor}()
 
@@ -501,6 +549,8 @@ function extra_expense(actor::Actor)
 end
 
 function load_configuration(model, file_path::String)
+    model.properties[:currency_balance] = Balance()
+    typemin_asset!(model.currency_balance, SUMSY_DEP)
     sumsy = model.sumsy
     actors = Dict{Symbol, Vector{Actor}}()
     offers = Dict{Blueprint, Vector{Actor}}()
@@ -523,6 +573,8 @@ function load_configuration(model, file_path::String)
             end
         else
             number = haskey(settings, NUMBER) ? settings[NUMBER] : 1
+            currency_demand = haskey(settings, CURRENCY_DEMAND) ? create_marginality(settings[CURRENCY_DEMAND]) : Marginality([(0, 0)])
+            currency_amount = haskey(settings, CURRENCY_AMOUNT) ? settings[CURRENCY_AMOUNT] : 0
             overrides = haskey(settings, SUMSY_OVERRIDES) ? create_overrides(sumsy, settings[SUMSY_OVERRIDES]) : sumsy_overrides(sumsy)
 
             prices = haskey(settings, PRICES) ? create_prices!(settings[PRICES], blueprints) : Dict{Blueprint, Price}()
@@ -543,6 +595,8 @@ function load_configuration(model, file_path::String)
                                 offers,
                                 demands,
                                 linked_to,
+                                currency_demand,
+                                currency_amount,
                                 needs,
                                 overrides,
                                 prices,
@@ -563,6 +617,8 @@ function load_configuration(model, file_path::String)
                                     actors,
                                     offers,
                                     demands,
+                                    currency_demand,
+                                    currency_amount,
                                     needs,
                                     overrides,
                                     max_volunteers,
@@ -578,6 +634,8 @@ function load_configuration(model, file_path::String)
                                     actors,
                                     offers,
                                     demands,
+                                    currency_demand,
+                                    currency_amount,
                                     needs,
                                     overrides,
                                     prices,
@@ -590,6 +648,8 @@ function load_configuration(model, file_path::String)
                                 actors,
                                 offers,
                                 demands,
+                                currency_demand,
+                                currency_amount,
                                 needs,
                                 overrides,
                                 prices,
@@ -812,17 +872,37 @@ end
 
 function run_sim()
     BASIC_SUMSY = SuMSy(2000, 0, 0.01, 30)
-    run_simulation(BASIC_SUMSY, "../lorecosimdash/backend/abm_test_config.json", 100)
+    run_simulation(BASIC_SUMSY, "../lorecosimdash.jl/sim_configurations/abm_test_config.json", 100)
 end
 
 function run_conservative()
     BASIC_SUMSY = SuMSy(2000, 0, 0.01, 30)
-    run_simulation(BASIC_SUMSY, "../lorecosimdash/backend/loreco_conservative.json", 100)
+    run_simulation(BASIC_SUMSY, "../lorecosimdash.jl/sim_configurations/loreco_conservative.json", 100)
 end
 
 function run_basic_associations()
     BASIC_SUMSY = SuMSy(2000, 0, 0.01, 30)
-    run_simulation(BASIC_SUMSY, "../lorecosimdash/backend/loreco_basic_associations.json", 500)
+    run_simulation(BASIC_SUMSY, "../lorecosimdash.jl/sim_configurations/loreco_basic_associations.json", 500)
+end
+
+function run_loreco()
+    BASIC_SUMSY = SuMSy(2000, 0, 0.01, 1)
+    
+    model = create_sumsy_model(BASIC_SUMSY)
+    actors, offers, demands = load_configuration(model, "../lorecosimdash.jl/sim_configurations/loreco_baseline_plus_vereniging.json")
+    link_actors(actors, offers, demands)    
+
+    data, _ = run_econo_model!(model, 1000,
+                    adata = [klaver_balance,
+                                extra_income,
+                                extra_expense,
+                                actor_type,
+                                :transactions_in,
+                                :transaction_volume_in,
+                                :transactions_out,
+                                :transaction_volume_out])
+
+    return data, model.currency_balance
 end
 
 # analyse_wealth(run())
@@ -832,3 +912,7 @@ end
 # analyse_wealth_distribution(run_sim())
 
 # run_basic_associations()
+
+# run_loreco()
+
+# run_sim()

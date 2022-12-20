@@ -3,12 +3,13 @@
         "type": "configuration",
         "commercial": ["merchant"],
         "private": ["beneficiary", "non_beneficiary"],
-        "institution": ["gemeente"],
-        "currency_provider": ["klavermerchant"]
+        "institution": ["gemeente"]
     },
-{
-        "number": 1,
+    {
         "type": "gemeente",
+        "number": 1,
+        "currency_demand": [[1, 0.5]],
+        "currency_amount": 5,
         "sumsy_overrides":
             {
                 "income": 0,
@@ -19,8 +20,7 @@
             {
                 "zwembad": 3,
                 "containerpark": 4,
-                "vergaderzaal": 150,
-                "Klaveraankoop_gemeente": 1
+                "vergaderzaal": 150
             },
         "needs":
             {
@@ -29,10 +29,12 @@
                 "weinig_succesvol": [[1, 0.125]],
                 "onsuccesvol": [[1, 0.0025]]
              }
-   },
- {
-        "number": 3,
+    },
+    {
         "type": "merchant",
+        "number": 3,
+        "currency_demand": [[1, 0.01]],
+        "currency_amount": 5,
         "linked_to": ["beneficiary"],
         "sumsy_overrides":
             {
@@ -42,8 +44,7 @@
             },
         "prices":
             {
-                "zeer_succesvol": 3,
-                "Klaveraankoop_merchant": 1
+                "zeer_succesvol": 3
             },
         "needs":
             {
@@ -53,11 +54,13 @@
                 "onsuccesvol": [[1, 0.005]],
                 "vergaderzaal": [[1, 0.5]],
                 "containerpark": [[1, 0.5]]
-             }
+                }
     },
     {
-        "number": 3,
         "type": "merchant",
+        "number": 3,
+        "currency_demand": [[1, 0.01]],
+        "currency_amount": 5,
         "linked_to": ["beneficiary"],
         "sumsy_overrides":
             {
@@ -67,8 +70,7 @@
             },
         "prices":
             {
-                "succesvol": 3,
-                "Klaveraankoop_merchant": 1
+                "succesvol": 3
             },
         "needs":
             {
@@ -81,8 +83,10 @@
             }
     },    
     {
-        "number": 6,
         "type": "merchant",
+        "number": 6,
+        "currency_demand": [[1, 0.01]],
+        "currency_amount": 5,
         "linked_to": ["beneficiary"],
         "sumsy_overrides":
             {
@@ -92,8 +96,7 @@
             },
         "prices":
             {
-                "weinig_succesvol": 3,
-                "Klaveraankoop_merchant": 1
+                "weinig_succesvol": 3
             },
         "needs":
             {
@@ -106,8 +109,10 @@
             }
     }, 
     {
-        "number": 2,
         "type": "merchant",
+        "number": 2,
+        "currency_demand": [[1, 0.01]],
+        "currency_amount": 5,
         "linked_to": ["beneficiary"],
         "sumsy_overrides":
             {
@@ -117,8 +122,7 @@
             },
         "prices":
             {
-                "onsuccesvol": 3,
-                "Klaveraankoop_merchant": 1
+                "onsuccesvol": 3
             },
         "needs":
             {
@@ -131,8 +135,10 @@
             }
     },
     {
-        "number": 84,
         "type": "beneficiary",
+        "number": 84,
+        "currency_demand": [[1, 0.15]],
+        "currency_amount": 5,
         "sumsy_overrides":
             {
                 "income": 16,
@@ -152,13 +158,14 @@
             },
         "prices":
             {
-                "prod_GI": 2.5,
-                "Klaveraankoop_GI": 1
+                "prod_GI": 2.5
             }
     },
     {
-        "number": 50,
         "type": "non_beneficiary",
+        "number": 50,
+        "currency_demand": [[1, 0.05]],
+        "currency_amount": 5,
         "sumsy_overrides":
             {
                 "income": 0,
@@ -178,19 +185,7 @@
             },
         "prices":
             {
-                "prod_Non_GI": 2.5,
-                "Klaveraankoop_non_GI": 1
-            }
-    },
-    {
-        "number": 1,
-        "type": "klavermerchant",    
-        "needs":
-            {
-                "Klaveraankoop_merchant": [[5, 0.01]],
-                "Klaveraankoop_GI": [[5, 0.15]],
-                "Klaveraankoop_non_GI": [[5, 0.05]],
-		        "Klaveraankoop_gemeente": [[5, 0.5]]  
+                "prod_Non_GI": 2.5
             }
     }
 ]

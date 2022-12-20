@@ -2,12 +2,13 @@
     {
         "type": "configuration",
         "commercial": ["merchant"],
-        "private": ["beneficiary", "non_beneficiary"],
-        "currency_provider": ["Klavermerchant"]
+        "private": ["beneficiary", "non_beneficiary"]
     },
     {
-        "number": 3,
         "type": "merchant",
+        "number": 3,
+        "currency_demand": [[1, 0.01]],
+        "currency_amount": 5,
         "linked_to": ["beneficiary"],
         "sumsy_overrides":
             {
@@ -17,8 +18,7 @@
             },
         "prices":
             {
-                "zeer_succesvol": 3,
-                "Klaveraankoop_merchant": 1
+                "zeer_succesvol": 3
             },
         "needs":
             {
@@ -29,8 +29,10 @@
              }
     },
     {
-        "number": 3,
         "type": "merchant",
+        "number": 3,
+        "currency_demand": [[1, 0.01]],
+        "currency_amount": 5,
         "linked_to": ["beneficiary"],
         "sumsy_overrides":
             {
@@ -40,8 +42,7 @@
             },
         "prices":
             {
-                "succesvol": 3,
-                "Klaveraankoop_merchant": 1
+                "succesvol": 3
             },
         "needs":
             {
@@ -52,8 +53,10 @@
             }
     },    
     {
-        "number": 6,
         "type": "merchant",
+        "number": 6,
+        "currency_demand": [[1, 0.01]],
+        "currency_amount": 5,
         "linked_to": ["beneficiary"],
         "sumsy_overrides":
             {
@@ -63,8 +66,7 @@
             },
         "prices":
             {
-                "weinig_succesvol": 3,
-                "Klaveraankoop_merchant": 1
+                "weinig_succesvol": 3
             },
         "needs":
             {
@@ -75,8 +77,10 @@
             }
     }, 
     {
-        "number": 2,
         "type": "merchant",
+        "number": 2,
+        "currency_demand": [[1, 0.01]],
+        "currency_amount": 5,
         "linked_to": ["beneficiary"],
         "sumsy_overrides":
             {
@@ -86,8 +90,7 @@
             },
         "prices":
             {
-                "onsuccesvol": 3,
-                "Klaveraankoop_merchant": 1
+                "onsuccesvol": 3
             },
         "needs":
             {
@@ -98,8 +101,10 @@
             }
     },
     {
-        "number": 84,
         "type": "beneficiary",
+        "number": 84,
+        "currency_demand": [[1, 0.15]],
+        "currency_amount": 5,
         "sumsy_overrides":
             {
                 "income": 16,
@@ -117,13 +122,14 @@
             },
         "prices":
             {
-                "prod_GI": 2.5,
-                "Klaveraankoop_GI": 1
+                "prod_GI": 2.5
             }
     },
     {
-        "number": 50,
         "type": "non_beneficiary",
+        "number": 50,
+        "currency_demand": [[1, 0.05]],
+        "currency_amount": 5,
         "sumsy_overrides":
             {
                 "income": 0,
@@ -141,18 +147,7 @@
             },
         "prices":
             {
-                "prod_Non_GI": 2.5,
-                "Klaveraankoop_GI": 1
-            }
-    },
-    {
-        "number": 1,
-        "type": "Klavermerchant",
-        "needs":
-            {
-                "Klaveraankoop_merchant": [[5, 0.01]],
-                "Klaveraankoop_GI": [[5, 0.15]],
-                "Klaveraankoop_non_GI": [[5, 0.05]]  
+                "prod_Non_GI": 2.5
             }
     }
 ]

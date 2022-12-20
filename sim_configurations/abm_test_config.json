@@ -9,6 +9,8 @@
     {
         "type": "merchant",
         "number": 1,
+        "currency_demand": [[1, 0.01]],
+        "currency_amount": 5,
         "linked_to": ["civilian", "beneficiary"],
         "own_wage": 15,
         "employees": 1,
@@ -25,12 +27,15 @@
         "prices":
             {
                 "Jupiler": 2,
-                "Duvel": 4
+                "Duvel": 4,
+                "currency_demand_merchant": 1
             }
     },
     {
         "type": "association",
         "number": 1,
+        "currency_demand": [[1, 0.05]],
+        "currency_amount": 5,
         "max_volunteers": 1,
         "volunteer_need": 1,
         "max_customers": 10,
@@ -44,7 +49,8 @@
         "prices":
             {
                 "Koffie": 2,
-                "Thee": 4
+                "Thee": 4,
+                "currency_demand_association": 1
             }
     },
     {
@@ -60,12 +66,15 @@
         "prices":
             {
                 "Zwembad": 3,
-                "Container park": 4
+                "Container park": 4,
+                "currency_demand_institution": 1
             }
     },
     {
         "type": "beneficiary",
         "number": 1,
+        "currency_demand": [[1, 0.15]],
+        "currency_amount": 5,
         "sumsy_overrides":
             {
                 "seed": 100,
@@ -73,27 +82,41 @@
                 "dem_free": 100,
                 "demurrage": 2.5
             },
+        "prices":
+            {
+                "currency_demand_beneficiary": 1,
+                "Service": 2
+            },
         "needs":
             {
                 "Duvel": [[2, 1], [5, 0.5]],
                 "Koffie": [[1, 1]],
-                "Zwembad": [[1, 0.5]]
+                "Zwembad": [[1, 0.5]],
+                "Service": [[1, 0.1]]
             }
     },
     {
         "type": "civilian",
         "number": 1,
+        "currency_demand": [[1, 0.05]],
+        "currency_amount": 5,
         "sumsy_overrides":
             {
                 "income": 0,
                 "dem_free": 100,
                 "demurrage": 2.5
             },
+        "prices":
+            {
+                "currency_demand_non_beneficiary": 1,
+                "Service": 2
+            },
         "needs":
             {
                 "Jupiler": [[3, 1], [7, 0.5]],
                 "Thee": [[1, 1]],
-                "Container park": [[1, 0.2]]
+                "Container park": [[1, 0.2]],
+                "Service": [[1, 0.1]]
             }
     }
 ]
