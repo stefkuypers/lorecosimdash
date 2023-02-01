@@ -84,12 +84,19 @@ function transaction_statistics_trigger(balance::Balance,
     end
 end
 
+function book_and_log!(balance::Balance, sumsy::SuMSy, seed::Currency, guaranteed_income::Currency, demurrage::Currency, step::Integer)
+    balance.paid_demurrage = demurrage
+    book_net_result!(balance, sumsy, seed, guaranteed_income, demurrage, step)
+end
+
 function acquire_currency(model, actor::Actor)
     demands = process(actor.currency_demand)
 
     if demands > 0
         transfer_asset!(model.currency_balance, actor.balance, SUMSY_DEP, demands * actor.currency_amount, model.step)
     end
+
+    actor.demanded_currency = Currency(demands)
 end
 
 function create_actors!(model,
@@ -110,8 +117,11 @@ function create_actors!(model,
         set_sumsy_overrides!(actor.balance, overrides)
         add_triggers!(actor.balance, init_transaction_statistics_trigger)
 
+        actor.balance.paid_demurrage = CUR_0
+
         actor.currency_demand = currency_demand
         actor.currency_amount = currency_amount
+        actor.demanded_currency = CUR_0
 
         actor.transactions_in = 0
         actor.transaction_volume_in = Currency(0)
@@ -528,6 +538,10 @@ function actor_type(actor::Actor)
     return first(setdiff(actor.types, [:marginal]))
 end
 
+function paid_demurrage(actor::Actor)
+    return actor.balance.paid_demurrage
+end
+
 function extra_income(actor::Actor)
     if !isempty(intersect(actor.types, CATEGORY_DICT[PRIVATE]))
         return actor.volunteering
@@ -546,6 +560,10 @@ function extra_expense(actor::Actor)
     else
         return 0
     end
+end
+
+function demanded_currency(actor::Actor)
+    return actor.demanded_currency
 end
 
 function load_configuration(model, file_path::String)
@@ -662,7 +680,7 @@ function load_configuration(model, file_path::String)
 end
 
 function run_simulation(sumsy::SuMSy, file_path::String, sim_length::Integer)
-    model = create_sumsy_model(sumsy)
+    model = create_sumsy_model(sumsy, booking_function = book_and_log!)
     actors, offers, demands = load_configuration(model, file_path)
     link_actors(actors, offers, demands)    
 
@@ -671,6 +689,8 @@ function run_simulation(sumsy::SuMSy, file_path::String, sim_length::Integer)
                                 extra_income,
                                 extra_expense,
                                 actor_type,
+                                demanded_currency,
+                                paid_demurrage,
                                 :transactions_in,
                                 :transaction_volume_in,
                                 :transactions_out,
@@ -870,6 +890,80 @@ function analyse_transaction_data(data)
     return transaction_analysis
 end
 
+function analyse_currency_demand(data)
+    currency_demand_analysis = Dict{Symbol, NamedTuple}()
+    groups = groupby(data, :step)
+
+    for group in groups
+        type_groups = groupby(group, :actor_type)
+
+        for type_group in type_groups
+            type = type_group[!, :actor_type][1]
+
+            demands = get!(currency_demand_analysis, type, (min_currency_demand = Vector{Currency}(),
+                                                            max_currency_demand = Vector{Currency}(),
+                                                            average_currency_demand = Vector{Currency}(),
+                                                            total_currency_demand = Vector{Currency}()))
+
+            num_actors = length(eachrow(type_group))
+            total_currency_demand = sum(type_group[!, :demanded_currency])
+            average_currency_demand = total_currency_demand / num_actors
+
+            min_currency_demand = INF
+            max_currency_demand = CUR_0
+
+            for row in eachrow(type_group)
+                min_currency_demand = min(row[:demanded_currency], min_currency_demand)
+                max_currency_demand = max(row[:demanded_currency], max_currency_demand)
+            end
+
+            push!(demands.min_currency_demand, min_currency_demand)
+            push!(demands.max_currency_demand, max_currency_demand)
+            push!(demands.average_currency_demand, average_currency_demand)
+            push!(demands.total_currency_demand, total_currency_demand)
+        end
+    end
+
+    return currency_demand_analysis
+end
+
+function analyse_demurrage(data)
+    demurrage_analysis = Dict{Symbol, NamedTuple}()
+    groups = groupby(data, :step)
+
+    for group in groups
+        type_groups = groupby(group, :actor_type)
+
+        for type_group in type_groups
+            type = type_group[!, :actor_type][1]
+
+            demurrages = get!(demurrage_analysis, type, (min_demurrage = Vector{Currency}(),
+                                                            max_demurrage = Vector{Currency}(),
+                                                            average_demurrage = Vector{Currency}(),
+                                                            total_demurrage = Vector{Currency}()))
+
+            num_actors = length(eachrow(type_group))
+            total_demurrage = sum(type_group[!, :paid_demurrage])
+            average_demurrage = total_demurrage / num_actors
+
+            min_demurrage = INF
+            max_demurrage = CUR_0
+
+            for row in eachrow(type_group)
+                min_demurrage = min(row[:paid_demurrage], min_demurrage)
+                max_demurrage = max(row[:paid_demurrage], max_demurrage)
+            end
+
+            push!(demurrages.min_demurrage, min_demurrage)
+            push!(demurrages.max_demurrage, max_demurrage)
+            push!(demurrages.average_demurrage, average_demurrage)
+            push!(demurrages.total_demurrage, total_demurrage)
+        end
+    end
+
+    return demurrage_analysis
+end
+
 function run_sim()
     BASIC_SUMSY = SuMSy(2000, 0, 0.01, 30)
     run_simulation(BASIC_SUMSY, "../lorecosimdash.jl/sim_configurations/abm_test_config.json", 100)
@@ -897,6 +991,7 @@ function run_loreco()
                                 extra_income,
                                 extra_expense,
                                 actor_type,
+                                demanded_currency,
                                 :transactions_in,
                                 :transaction_volume_in,
                                 :transactions_out,
