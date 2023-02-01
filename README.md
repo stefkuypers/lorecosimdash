@@ -1,6 +1,6 @@
 # lorecosimdash
 
-In order to run this code, the [v2.0-alpha.1 EconoSim.jl package](https://github.com/HapponomyOrg/EconoSim.jl/releases/tag/v2.0-alpha.1) needs to be used. Using other versions of this package might not work.
+In order to run this code, the [v2.0-alpha.1 EconoSim.jl package](https://github.com/HapponomyOrg/EconoSim.jl/releases/tag/v2.0-alpha.1) must be used. Using other versions might result into errors.
 
 This project contains code to run complementary money simulations where the complementary currency system is based on the Sustainable Money System developed by [Happonomy](http://happonomy.org).
 
