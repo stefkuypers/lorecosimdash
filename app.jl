@@ -1,5 +1,5 @@
 using DataFrames, Dash, DashHtmlComponents, DashCoreComponents, DashBootstrapComponents, PlotlyJS, Statistics
-#using EconoSim
+using EconoSim
 
 include("loreco_sim.jl")
 include("loreco_app.jl")
