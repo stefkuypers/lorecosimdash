@@ -22,7 +22,7 @@
             {
                 "income": 0,
                 "dem_free": 100,
-                "demurrage": [[0, 1], [100, 2.5]]
+                "demurrage": [[0, 0.01], [100, 0.025]]
             },
         "prices":
             {
@@ -44,7 +44,7 @@
             {
                 "income": 0,
                 "dem_free": 100,
-                "demurrage": 1
+                "demurrage": 0.01
             },
         "prices":
             {
@@ -80,7 +80,7 @@
                 "seed": 100,
                 "income": 16,
                 "dem_free": 100,
-                "demurrage": 2.5
+                "demurrage": 0.025
             },
         "prices":
             {
@@ -104,7 +104,7 @@
             {
                 "income": 0,
                 "dem_free": 100,
-                "demurrage": 2.5
+                "demurrage": 0.025
             },
         "prices":
             {

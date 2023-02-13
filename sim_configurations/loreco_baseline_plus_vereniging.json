@@ -17,7 +17,7 @@
             {
                 "income": 0,
                 "dem_free": 0,
-                "demurrage": 0.5
+                "demurrage": 0.005
             },
         "prices":
             {
@@ -43,7 +43,7 @@
             {
                 "income": 0,
                 "dem_free": 0,
-                "demurrage": 0.5
+                "demurrage": 0.005
             },
         "prices":
             {
@@ -69,7 +69,7 @@
             {
                 "income": 0,
                 "dem_free": 0,
-                "demurrage": 0.5
+                "demurrage": 0.005
             },
         "prices":
             {
@@ -95,7 +95,7 @@
             {
                 "income": 0,
                 "dem_free": 0,
-                "demurrage": 0.5
+                "demurrage": 0.005
             },
         "prices":
             {
@@ -121,7 +121,7 @@
             {
                 "income": 0,
                 "dem_free": 0,
-                "demurrage": 0.5
+                "demurrage": 0.005
             },
         "prices":
             {
@@ -148,7 +148,7 @@
             {
                 "income": 0,
                 "dem_free": 0,
-                "demurrage": 0.5
+                "demurrage": 0.005
             },
         "prices":
             {
@@ -174,7 +174,7 @@
             {
                 "income": 0,
                 "dem_free": 0,
-                "demurrage": 0.5
+                "demurrage": 0.005
             },
         "prices":
             {
@@ -198,7 +198,7 @@
             {
                 "income": 16,
                 "dem_free": 5,
-                "demurrage": 2.5
+                "demurrage": 0.025
             },
         "needs":
             {
@@ -228,7 +228,7 @@
             {
                 "income": 0,
                 "dem_free": 5,
-                "demurrage": 2.5
+                "demurrage": 0.025
             },
         "needs":
             {
