@@ -393,10 +393,10 @@ function create_overrides(sumsy::SuMSy, params)
         dem_tiers = Vector{Tuple{Real, Real}}()
 
         for pair in demurrage
-            push!(dem_tiers, (pair[1], pair[2]/100))
+            push!(dem_tiers, (pair[1], pair[2]))
         end
     else
-        dem_tiers = demurrage/100
+        dem_tiers = demurrage
     end
 
     return sumsy_overrides(sumsy, guaranteed_income = income, dem_free = dem_free, dem_tiers = dem_tiers)
